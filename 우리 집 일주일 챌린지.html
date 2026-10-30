@@ -1,0 +1,589 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>우리 집 일주일 챌린지</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap">
+<style>
+/* Layout: 한 화면씩 넘어가는 3단계(가족 꾸리기 → 일주일 계획 → 실천 결과) 보드게임판 */
+:root{
+  --bg:#EEF6F1; --paper:#FFFFFF; --ink:#22313A; --muted:#5E7480; --line:#D3E3DA;
+  --teal:#1C9C86; --teal-soft:#D5F0E8; --sun:#FFC93C; --sun-soft:#FFF1C7;
+  --pink:#EC5F86; --pink-soft:#FCE1E9; --red:#E2513C; --red-soft:#FBDCD6;
+  --f-display:"Jua","Gowun Dodum",system-ui,sans-serif;
+  --f-body:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#13201C; --paper:#1C2C27; --ink:#EAF3EE; --muted:#9DB5AC; --line:#2F4640;
+  --teal:#3CC7AE; --teal-soft:#1F4038; --sun:#FFCF52; --sun-soft:#3D3618;
+  --pink:#FF7FA1; --pink-soft:#46222E; --red:#FF7A63; --red-soft:#4A2620; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#13201C; --paper:#1C2C27; --ink:#EAF3EE; --muted:#9DB5AC; --line:#2F4640;
+  --teal:#3CC7AE; --teal-soft:#1F4038; --sun:#FFCF52; --sun-soft:#3D3618;
+  --pink:#FF7FA1; --pink-soft:#46222E; --red:#FF7A63; --red-soft:#4A2620; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0;text-wrap:balance}
+h1{font-size:clamp(28px,5vw,42px);line-height:1.15}
+h2{font-size:24px}
+h3{font-size:19px}
+p{margin:0}
+.muted{color:var(--muted)}
+button{font-family:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-size:20px;display:flex;gap:8px;align-items:center}
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.step{font-size:13px;padding:4px 12px;border-radius:999px;background:var(--paper);border:1.5px solid var(--line);color:var(--muted)}
+.step.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.panel{background:var(--paper);border:2px solid var(--line);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:16px}
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:20px;align-items:center}
+.hero .house{font-size:clamp(48px,9vw,84px);line-height:1;text-align:center;background:var(--sun-soft);border-radius:22px;padding:24px 8px;letter-spacing:4px}
+.goal{display:inline-block;background:var(--sun);color:#3a2c00;padding:0 8px;border-radius:8px}
+.tag{font-size:13px;color:var(--muted);letter-spacing:.04em}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border:2px solid var(--line);border-radius:16px;background:var(--bg)}
+.opt .l{display:flex;gap:10px;align-items:center}
+.opt .em{font-size:28px}
+.toggle{border:2px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 14px;font-size:14px;min-width:72px}
+.toggle[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper button{width:34px;height:34px;border-radius:50%;border:2px solid var(--line);background:var(--paper);font-size:18px;line-height:1}
+.stepper output{min-width:24px;text-align:center;font-family:var(--f-display);font-size:20px}
+.familyrow{display:flex;flex-wrap:wrap;gap:6px;font-size:34px;padding:14px;background:var(--teal-soft);border-radius:16px;min-height:72px;align-items:center}
+.familyrow small{font-size:14px;color:var(--ink);font-family:var(--f-body);margin-left:6px}
+.crit{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.critbtn{text-align:left;border:2px solid var(--line);background:var(--bg);border-radius:16px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start}
+.critbtn .em{font-size:26px}
+.critbtn b{font-family:var(--f-display);font-weight:400;font-size:18px;display:block}
+.critbtn span.d{font-size:13px;color:var(--muted)}
+.critbtn[aria-pressed="true"]{border-color:var(--teal);background:var(--teal-soft)}
+.cta{background:var(--teal);color:#fff;border:none;border-radius:16px;padding:14px 22px;font-family:var(--f-display);font-size:20px}
+.cta:disabled{opacity:.45;cursor:not-allowed}
+.ghost{background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:10px 16px;font-size:15px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+/* plan */
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:13px;padding:3px 10px;border-radius:999px;background:var(--teal-soft)}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.day{border:2px solid var(--line);border-radius:16px;background:var(--bg);padding:10px 8px;display:flex;flex-direction:column;gap:6px;text-align:left;min-height:170px;min-width:0}
+.day.sel{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-soft)}
+.day.over{border-color:var(--red)}
+.dname{font-family:var(--f-display);font-size:20px;display:flex;justify-content:space-between;align-items:baseline}
+.dname small{font-family:var(--f-body);font-size:11px;color:var(--muted)}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--teal);border-radius:6px;transition:width .25s}
+.day.over .bar i{background:var(--red)}
+.mins{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.day.over .mins{color:var(--red);font-weight:700}
+.placed{display:flex;flex-direction:column;gap:4px}
+.pc{font-size:12px;border:none;background:var(--paper);border-radius:10px;padding:4px 6px;text-align:left;display:flex;gap:4px;align-items:center;line-height:1.3}
+.pc:hover{background:var(--red-soft)}
+.pc .x{margin-left:auto;color:var(--muted)}
+.deckhead{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:2px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 14px;font-size:14px}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.card{border:2px solid var(--line);background:var(--paper);border-radius:18px;padding:12px;text-align:left;display:flex;flex-direction:column;gap:4px;position:relative;transition:transform .12s}
+.card:hover{transform:translateY(-2px);border-color:var(--teal)}
+.card .em{font-size:32px;line-height:1.1}
+.card b{font-weight:700;font-size:15px;line-height:1.3}
+.card .meta{font-size:12px;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap}
+.need{position:absolute;top:8px;right:8px;font-size:11px;background:var(--pink-soft);color:var(--pink);padding:2px 8px;border-radius:999px;font-weight:700}
+.card.in{opacity:.45}
+.hint{font-size:14px;background:var(--sun-soft);border-radius:14px;padding:10px 14px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);padding:12px 18px;border-radius:14px;font-size:15px;opacity:0;transition:.25s;pointer-events:none;max-width:calc(100% - 32px);z-index:20}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* result */
+.sim{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.sday{border:2px solid var(--line);border-radius:16px;padding:10px 8px;background:var(--bg);display:flex;flex-direction:column;gap:4px;font-size:12px;min-width:0;opacity:.35;transition:opacity .3s}
+.sday.show{opacity:1}
+.sday .big{font-size:28px;text-align:center}
+.sday .ev{background:var(--sun-soft);border-radius:8px;padding:3px 5px}
+.sday .ok{color:var(--teal)} .sday .ng{color:var(--red);text-decoration:line-through}
+.ending{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}
+.ending .bigem{font-size:clamp(64px,12vw,110px);line-height:1;background:var(--sun-soft);border-radius:24px;padding:16px 20px}
+.score{font-family:var(--f-display);font-size:48px;color:var(--teal);font-variant-numeric:tabular-nums;line-height:1}
+.score small{font-size:20px;color:var(--muted)}
+.meters{display:flex;flex-direction:column;gap:10px}
+.meter{display:grid;grid-template-columns:140px 1fr 56px;gap:10px;align-items:center;font-size:15px}
+.meter .bar{height:14px}
+.meter .v{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--f-display);font-size:18px}
+.meter .star{color:var(--pink);font-size:12px;margin-left:4px}
+.promise{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.promise label{display:flex;gap:8px;align-items:center;border:2px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--bg);cursor:pointer}
+.promise input{width:20px;height:20px;accent-color:var(--teal)}
+.promise label:has(input:checked){border-color:var(--pink);background:var(--pink-soft)}
+.reflect{display:flex;flex-direction:column;gap:6px;padding-left:20px;margin:0}
+/* PDF 저장 */
+.savebox{display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:var(--teal-soft);border-radius:16px;padding:14px}
+.savebox label{font-size:14px}
+.savebox input{font-family:inherit;font-size:16px;padding:8px 12px;border:2px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);min-width:0;flex:1 1 200px}
+.savemsg{font-size:14px;width:100%}
+/* A4 출력지: 화면 밖에서 항상 흰 종이로 그려 캡처 */
+#sheet{position:fixed;left:-10000px;top:0;width:794px;background:#fff;color:#222;font-family:var(--f-body);padding:40px 44px;display:flex;flex-direction:column;gap:14px;font-size:13px;line-height:1.5}
+#sheet h1{font-size:26px;color:#1C6E60}
+#sheet h3{font-size:16px;color:#1C6E60;border-bottom:2px solid #CFE6DD;padding-bottom:3px}
+#sheet .sh-top{display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+#sheet .sh-name{border-bottom:1.5px solid #333;min-width:240px;text-align:center;font-size:15px;padding-bottom:2px}
+#sheet table{width:100%;border-collapse:collapse;table-layout:fixed}
+#sheet th,#sheet td{border:1px solid #BFD3CB;padding:5px 6px;vertical-align:top;font-size:12px}
+#sheet th{background:#E8F4EF;font-weight:700}
+#sheet .sh-end{display:flex;gap:16px;align-items:center;background:#FFF4D1;border-radius:14px;padding:12px 16px}
+#sheet .sh-end .e{font-size:54px;line-height:1}
+#sheet .sh-score{font-family:var(--f-display);font-size:30px;color:#1C9C86}
+#sheet .sh-bar{height:10px;background:#E3ECE8;border-radius:5px;overflow:hidden}
+#sheet .sh-bar i{display:block;height:100%;background:#1C9C86}
+#sheet .sh-meter{display:grid;grid-template-columns:130px 1fr 50px;gap:8px;align-items:center}
+#sheet .sh-line{border-bottom:1px dashed #999;height:24px}
+#sheet .sh-q{display:flex;flex-direction:column;gap:2px}
+#sheet .sh-two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pdfbox{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.pdfbox input{font-family:inherit;font-size:16px;padding:10px 12px;border:2px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);min-width:0;width:180px}
+.pdfmsg{font-size:14px;color:var(--muted)}
+/* PDF 활동지: 화면 밖에서 A4(794×1123px)로 그려 종이처럼 항상 흰 바탕 */
+:root{--r-paper:#FFFFFF;--r-ink:#1E2A30;--r-muted:#5E7480;--r-line:#C9D8D0;--r-teal:#1C9C86;--r-soft:#E6F4EE;--r-sun:#FFF1C7;--r-red:#D9472F}
+#report{position:fixed;left:-10000px;top:0;width:794px;height:1123px;background:var(--r-paper);color:var(--r-ink);font-family:var(--f-body);font-size:13px;line-height:1.45;padding:40px 44px;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+#report h1{font-size:26px;color:var(--r-ink)} #report h3{font-size:16px;color:var(--r-teal);margin-bottom:4px}
+#report .rhead{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid var(--r-teal);padding-bottom:10px;gap:12px}
+#report .rsub{font-size:12px;color:var(--r-muted)}
+#report .who{display:flex;gap:18px;font-size:14px;white-space:nowrap}
+#report .who span{border-bottom:1.5px solid var(--r-ink);padding:0 4px;min-width:80px;display:inline-block}
+#report .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#report .rbox{border:1.5px solid var(--r-line);border-radius:12px;padding:10px 12px}
+#report table{width:100%;border-collapse:collapse;font-size:12px}
+#report th,#report td{border:1px solid var(--r-line);padding:5px 6px;text-align:left;vertical-align:top}
+#report th{background:var(--r-soft);font-weight:700}
+#report td.c{text-align:center;white-space:nowrap}
+#report .ng{color:var(--r-red);text-decoration:line-through}
+#report .rend{display:flex;gap:14px;align-items:center;background:var(--r-sun);border-radius:12px;padding:10px 14px}
+#report .rend .e{font-size:44px;line-height:1}
+#report .rend b{font-family:var(--f-display);font-weight:400;font-size:20px}
+#report .rscore{font-family:var(--f-display);font-size:30px;color:var(--r-teal);margin-left:auto;white-space:nowrap}
+#report .rm{display:grid;grid-template-columns:110px 1fr 40px;gap:8px;align-items:center;font-size:12px}
+#report .rm .bar{height:10px;background:var(--r-line)} #report .rm .bar i{background:var(--r-teal)}
+#report .lines div{border-bottom:1px dashed var(--r-line);height:24px}
+#report .q{font-size:12.5px;margin-top:6px}
+#report .sign{display:flex;justify-content:flex-end;gap:10px;align-items:center;margin-top:auto;font-size:13px}
+#report .sign span{display:inline-block;width:90px;height:44px;border:1.5px solid var(--r-line);border-radius:10px}
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr}
+  .week,.sim{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .day{min-height:0}
+  .ending{grid-template-columns:1fr;justify-items:center;text-align:center}
+  .meter{grid-template-columns:110px 1fr 48px;font-size:14px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">🏠 우리 집 일주일 챌린지</div>
+    <nav class="steps" aria-label="진행 단계">
+      <span class="step on" data-s="setup">1 가족 꾸리기</span>
+      <span class="step" data-s="plan">2 일주일 계획</span>
+      <span class="step" data-s="result">3 실천 결과</span>
+    </nav>
+  </header>
+
+  <!-- 1. 가족 꾸리기 -->
+  <section id="setup" class="wrap" style="gap:20px">
+    <div class="panel hero">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span class="tag">실과 · 가정생활 | 자신의 위치에서 할 수 있는 가정 일을 찾아 계획하고 실천하기</span>
+        <h1>나의 빈 시간으로<br><span class="goal">우리 집 일주일</span>을 도와보자!</h1>
+        <p class="muted">우리 가족을 꾸리고, 내가 할 수 있는 집안일을 골라 일주일 시간표에 넣어 보세요. 너무 많이 넣으면 실천이 어려워지고, 위험한 일은 감점이에요.</p>
+      </div>
+      <div class="house" aria-hidden="true">🏡<br>🧹🍚👕🧸</div>
+    </div>
+
+    <div class="panel">
+      <h2>👨‍👩‍👧‍👦 우리 가족을 꾸려요</h2>
+      <div class="grid2">
+        <div class="opt"><div class="l"><span class="em">👨</span><b>아빠</b></div><button class="toggle" id="t-dad" aria-pressed="true">함께 살아요</button></div>
+        <div class="opt"><div class="l"><span class="em">👩</span><b>엄마</b></div><button class="toggle" id="t-mom" aria-pressed="true">함께 살아요</button></div>
+        <div class="opt"><div class="l"><span class="em">💼</span><div><b>맞벌이 가정</b><div class="muted" style="font-size:13px">부모님이 모두 일하러 나가세요</div></div></div><button class="toggle" id="t-work" aria-pressed="false">아니요</button></div>
+        <div class="opt"><div class="l"><span class="em">👵</span><b>할머니·할아버지</b></div><button class="toggle" id="t-grand" aria-pressed="false">아니요</button></div>
+        <div class="opt"><div class="l"><span class="em">🧑</span><b>형·오빠</b></div><div class="stepper" data-k="bro"><button aria-label="형·오빠 빼기">−</button><output>0</output><button aria-label="형·오빠 더하기">+</button></div></div>
+        <div class="opt"><div class="l"><span class="em">👩‍🦰</span><b>누나·언니</b></div><div class="stepper" data-k="sis"><button aria-label="누나·언니 빼기">−</button><output>0</output><button aria-label="누나·언니 더하기">+</button></div></div>
+        <div class="opt"><div class="l"><span class="em">👶</span><b>동생</b></div><div class="stepper" data-k="young"><button aria-label="동생 빼기">−</button><output>0</output><button aria-label="동생 더하기">+</button></div></div>
+        <div class="opt"><div class="l"><span class="em">🐶</span><b>반려동물</b></div><button class="toggle" id="t-pet" aria-pressed="false">아니요</button></div>
+      </div>
+      <div class="familyrow" id="familyRow" aria-live="polite"></div>
+    </div>
+
+    <div class="panel">
+      <div class="row"><h2>⭐ 내가 중요하게 생각할 기준 2개</h2><span class="chip" id="critCount">0 / 2 선택</span></div>
+      <p class="muted">고른 기준은 점수가 1.5배! 기준을 생각하며 계획을 세워 보세요.</p>
+      <div class="crit" id="critBox"></div>
+    </div>
+
+    <div class="row" style="justify-content:flex-end">
+      <span class="muted" id="startHint">기준을 2개 골라 주세요.</span>
+      <button class="cta" id="startBtn" disabled>계획 세우러 가기 →</button>
+    </div>
+  </section>
+
+  <!-- 2. 계획 -->
+  <section id="plan" class="wrap" style="gap:20px" hidden>
+    <div class="panel">
+      <div class="row">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <h2>📅 나의 일주일 집안일 계획표</h2>
+          <div class="chips" id="planInfo"></div>
+        </div>
+        <button class="ghost" id="backSetup">← 가족 다시 꾸리기</button>
+      </div>
+      <p class="hint">① 요일을 누르고 → ② 아래 카드에서 할 일을 눌러 넣어요. 넣은 일을 누르면 빠져요. <b>📚 학원 가는 날</b>은 빈 시간이 짧아요!</p>
+      <div class="week" id="week"></div>
+    </div>
+
+    <div class="panel">
+      <div class="row"><h2>🃏 집안일 카드</h2><span class="muted" style="font-size:14px"><span class="need" style="position:static">❤️ 우리 집에 필요</span> 표시는 가족 상황에 꼭 필요한 일이에요</span></div>
+      <div class="deckhead" role="tablist" id="tabs"></div>
+      <div class="deck" id="deck"></div>
+    </div>
+
+    <div class="row" style="justify-content:flex-end">
+      <span class="muted" id="planSum"></span>
+      <button class="cta" id="runBtn" disabled>일주일 실천해 보기 ▶</button>
+    </div>
+  </section>
+
+  <!-- 3. 결과 -->
+  <section id="result" class="wrap" style="gap:20px" hidden>
+    <div class="panel">
+      <h2>🎬 일주일 실천 시뮬레이션</h2>
+      <p class="muted">계획대로 잘 될까요? 갑자기 바쁜 일이 생기기도 해요.</p>
+      <div class="sim" id="sim"></div>
+    </div>
+    <div id="endWrap" hidden class="wrap" style="gap:20px">
+      <div class="panel ending">
+        <div class="bigem" id="endEm"></div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span class="tag">나의 엔딩</span>
+          <h1 id="endTitle"></h1>
+          <p id="endText"></p>
+          <div class="score" id="endScore"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>📊 점수 살펴보기</h2>
+        <div class="meters" id="meters"></div>
+        <p class="muted" style="font-size:13px">❤️ 표시는 내가 고른 기준이에요(점수 1.5배). 총점 100점 기준으로 맞춰 계산했어요.</p>
+      </div>
+      <div class="panel">
+        <h2>✋ 진짜로 실천할 일 고르기</h2>
+        <p class="muted">게임에서 해낸 일 중에서 이번 주에 진짜로 해 볼 일을 골라 보세요. 골라서 공책에 옮겨 적어요!</p>
+        <div class="promise" id="promise"></div>
+        <h3 style="margin-top:6px">💬 돌아보기</h3>
+        <ol class="reflect" id="reflect"></ol>
+      </div>
+      <div class="panel">
+        <h2>📄 활동지로 저장하기</h2>
+        <p class="muted">위에서 진짜 실천할 일을 고른 뒤, 이름을 쓰고 저장하면 A4 세로 PDF 활동지가 만들어져요. 돌아보기 칸은 인쇄해서 직접 써요.</p>
+        <div class="pdfbox">
+          <input id="stuNo" placeholder="번호" inputmode="numeric" style="width:90px" aria-label="번호">
+          <input id="stuName" placeholder="이름" aria-label="이름">
+          <button class="cta" id="pdfBtn">PDF 저장 ⬇</button>
+          <span class="pdfmsg" id="pdfMsg" role="status"></span>
+        </div>
+      </div>
+      <div class="row" style="justify-content:flex-end">
+        <button class="ghost" id="again">처음부터 (가족 바꾸기)</button>
+        <button class="cta" id="replan">계획 다시 세우기 ↺</button>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<div id="report" aria-hidden="true"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const fam={dad:true,mom:true,work:false,grand:false,pet:false,bro:0,sis:0,young:0};
+const CRIT=[
+  {k:"doable",em:"✅",n:"실천 가능성",d:"무리하지 않고 끝까지 해내기"},
+  {k:"steady",em:"🗓️",n:"꾸준함",d:"여러 날에 골고루 실천하기"},
+  {k:"variety",em:"🌈",n:"다양함",d:"식·의·주·돌봄 여러 영역 해 보기"},
+  {k:"help",em:"❤️",n:"가족 돕기",d:"우리 집에 꼭 필요한 일 맡기"}
+];
+let crit=[];
+const AREAS={food:"🍚 식생활",cloth:"👕 의생활",home:"🧹 주생활",care:"🧸 가족 돌봄"};
+// need(f): 우리 집에 꼭 필요한가 / show(f): 카드 등장 조건 / danger: 내 위치에서 하기 위험
+const CHORES=[
+  {id:"rice",em:"🍚",n:"쌀 씻어 밥 안치기",m:15,a:"food",need:f=>f.work||size(f)>=5},
+  {id:"table",em:"🥢",n:"수저 놓고 식탁 차리기",m:5,a:"food",need:f=>size(f)>=5},
+  {id:"dish",em:"🍽️",n:"설거지하기",m:20,a:"food",need:f=>f.work||size(f)>=5},
+  {id:"toast",em:"🥪",n:"간단한 아침 준비하기",m:15,a:"food",need:f=>f.work},
+  {id:"fridge",em:"🧊",n:"냉장고 반찬통 정리",m:10,a:"food",need:()=>false},
+  {id:"fry",em:"🍳",n:"혼자 기름 튀김 요리하기",m:25,a:"food",danger:"뜨거운 기름은 어른과 함께해야 해요"},
+  {id:"fold",em:"👕",n:"마른 빨래 개기",m:15,a:"cloth",need:f=>f.work||size(f)>=5},
+  {id:"hang",em:"🧺",n:"빨래 널기",m:15,a:"cloth",need:f=>f.work},
+  {id:"sock",em:"🧦",n:"양말 짝 맞춰 정리",m:10,a:"cloth",need:f=>f.young>0},
+  {id:"shoe",em:"👟",n:"내 실내화 빨기",m:20,a:"cloth",need:()=>false},
+  {id:"iron",em:"♨️",n:"혼자 다리미질하기",m:20,a:"cloth",danger:"다리미는 화상 위험! 어른과 함께해요"},
+  {id:"room",em:"🛏️",n:"내 방 정리·청소",m:20,a:"home",need:()=>false},
+  {id:"trash",em:"♻️",n:"분리배출하기",m:10,a:"home",need:f=>size(f)>=4},
+  {id:"sink",em:"🚰",n:"세면대 닦기",m:15,a:"home",need:f=>f.work},
+  {id:"plant",em:"🪴",n:"화분에 물 주기",m:5,a:"home",need:()=>false},
+  {id:"door",em:"👞",n:"현관 신발 정리",m:5,a:"home",need:f=>size(f)>=5},
+  {id:"vac",em:"🧹",n:"거실 청소기 돌리기",m:20,a:"home",need:f=>f.work},
+  {id:"window",em:"🪟",n:"베란다 난간 밖 창문 닦기",m:20,a:"home",danger:"높은 곳 바깥쪽은 떨어질 위험이 있어요"},
+  {id:"plug",em:"🔌",n:"고장 난 콘센트 고치기",m:15,a:"home",danger:"전기 수리는 어른·전문가가 해야 해요"},
+  {id:"play",em:"🧸",n:"동생과 놀아 주기",m:20,a:"care",show:f=>f.young>0,need:f=>f.work},
+  {id:"hw",em:"📖",n:"동생 숙제 봐 주기",m:15,a:"care",show:f=>f.young>0,need:f=>f.young>0},
+  {id:"shoulder",em:"💆",n:"부모님 어깨 주물러 드리기",m:10,a:"care",show:f=>f.dad||f.mom,need:f=>f.work},
+  {id:"grand",em:"👵",n:"할머니·할아버지 말벗·심부름",m:15,a:"care",show:f=>f.grand,need:f=>f.grand},
+  {id:"pet",em:"🐶",n:"반려동물 밥·물 챙기기",m:10,a:"care",show:f=>f.pet,need:f=>f.pet},
+  {id:"walk",em:"🦮",n:"반려동물 산책시키기",m:20,a:"care",show:f=>f.pet,need:()=>false},
+  {id:"bro",em:"🤝",n:"형제자매와 일 나눠 하기",m:10,a:"care",show:f=>f.bro+f.sis>0,need:f=>f.bro+f.sis>=2}
+];
+const DAYS=[
+  {n:"월",cap:20,ac:true},{n:"화",cap:35},{n:"수",cap:20,ac:true},{n:"목",cap:35},{n:"금",cap:20,ac:true},{n:"토",cap:60},{n:"일",cap:50}
+];
+const EVENTS=["📚 수행평가 준비로 바빠요","🤒 살짝 감기 기운이 있어요","🎂 친구 생일 파티에 가요","⏰ 늦잠을 잤어요","🏃 학교 행사가 늦게 끝났어요"];
+function size(f){return (f.dad?1:0)+(f.mom?1:0)+(f.grand?2:0)+f.bro+f.sis+f.young+1}
+let plan=DAYS.map(()=>[]), selDay=0, tab="all";
+
+/* ---------- 1. setup ---------- */
+function bindToggle(id,key,on,off){
+  const b=$(id);
+  b.onclick=()=>{fam[key]=!fam[key];paint()};
+  b._p=()=>{b.setAttribute("aria-pressed",fam[key]);b.textContent=fam[key]?on:off};
+}
+bindToggle("#t-dad","dad","함께 살아요","따로 살아요");
+bindToggle("#t-mom","mom","함께 살아요","따로 살아요");
+bindToggle("#t-work","work","네, 맞벌이","아니요");
+bindToggle("#t-grand","grand","함께 살아요","아니요");
+bindToggle("#t-pet","pet","키워요","아니요");
+document.querySelectorAll(".stepper").forEach(s=>{
+  const k=s.dataset.k,[minus,out,plus]=s.children;
+  minus.onclick=()=>{fam[k]=Math.max(0,fam[k]-1);paint()};
+  plus.onclick=()=>{fam[k]=Math.min(3,fam[k]+1);paint()};
+  s._p=()=>out.textContent=fam[k];
+});
+function paint(){
+  if(!fam.dad&&!fam.mom) fam.work=false;
+  ["#t-dad","#t-mom","#t-work","#t-grand","#t-pet"].forEach(i=>$(i)._p());
+  $("#t-work").disabled=!fam.dad&&!fam.mom;
+  document.querySelectorAll(".stepper").forEach(s=>s._p());
+  const e=[];
+  if(fam.grand)e.push("👵","👴");
+  if(fam.dad)e.push("👨"); if(fam.mom)e.push("👩");
+  for(let i=0;i<fam.bro;i++)e.push("🧑"); for(let i=0;i<fam.sis;i++)e.push("👩‍🦰");
+  e.push("🙋"); for(let i=0;i<fam.young;i++)e.push("👶");
+  if(fam.pet)e.push("🐶");
+  const tags=[`${size(fam)}명 가족`];
+  if(fam.work)tags.push("💼 맞벌이");
+  $("#familyRow").innerHTML=e.join("")+`<small>(🙋 = 나) · ${tags.join(" · ")}</small>`;
+}
+function paintCrit(){
+  $("#critBox").innerHTML=CRIT.map(c=>`<button class="critbtn" data-k="${c.k}" aria-pressed="${crit.includes(c.k)}"><span class="em">${c.em}</span><span><b>${c.n}</b><span class="d">${c.d}</span></span></button>`).join("");
+  $("#critBox").querySelectorAll("button").forEach(b=>b.onclick=()=>{
+    const k=b.dataset.k;
+    if(crit.includes(k))crit=crit.filter(x=>x!==k);
+    else if(crit.length<2)crit.push(k);
+    else toast("기준은 2개까지만 고를 수 있어요. 하나를 먼저 빼 주세요.");
+    paintCrit();
+  });
+  $("#critCount").textContent=`${crit.length} / 2 선택`;
+  $("#startBtn").disabled=crit.length!==2;
+  $("#startHint").textContent=crit.length===2?"좋아요! 계획을 세우러 가 볼까요?":"기준을 2개 골라 주세요.";
+}
+$("#startBtn").onclick=()=>{
+  // 가족이 바뀌어 사라진 카드 제거
+  plan=plan.map(d=>d.filter(id=>avail().some(c=>c.id===id)));
+  go("plan");
+};
+$("#backSetup").onclick=()=>go("setup");
+
+/* ---------- 2. plan ---------- */
+const byId=id=>CHORES.find(c=>c.id===id);
+const avail=()=>CHORES.filter(c=>!c.show||c.show(fam));
+const isNeed=c=>!c.danger&&c.need&&c.need(fam);
+const load=i=>plan[i].reduce((s,id)=>s+byId(id).m,0);
+function paintPlan(){
+  $("#planInfo").innerHTML=[`<span class="chip">${$("#familyRow").textContent.split("(")[0]}</span>`]
+    .concat(crit.map(k=>{const c=CRIT.find(x=>x.k===k);return `<span class="chip" style="background:var(--pink-soft)">${c.em} ${c.n}</span>`})).join("");
+  $("#week").innerHTML=DAYS.map((d,i)=>{
+    const l=load(i),over=l>d.cap;
+    return `<button class="day ${i===selDay?"sel":""} ${over?"over":""}" data-i="${i}" aria-pressed="${i===selDay}">
+      <span class="dname">${d.n}<small>${d.ac?"📚 학원":(i>4?"🌞 주말":"")}</small></span>
+      <span class="bar"><i style="width:${Math.min(100,l/d.cap*100)}%"></i></span>
+      <span class="mins">${l} / ${d.cap}분${over?" 넘침!":""}</span>
+      <span class="placed">${plan[i].map(id=>{const c=byId(id);return `<span class="pc" data-rm="${id}" role="button" tabindex="0">${c.em} ${c.n}<span class="x">✕</span></span>`}).join("")}</span>
+    </button>`}).join("");
+  $("#week").querySelectorAll(".day").forEach(b=>b.onclick=e=>{
+    const rm=e.target.closest("[data-rm]");
+    const i=+b.dataset.i;
+    if(rm){plan[i]=plan[i].filter(x=>x!==rm.dataset.rm);}
+    selDay=i;paintPlan();
+  });
+  const tabs=[["all","전체"],...Object.entries(AREAS)];
+  $("#tabs").innerHTML=tabs.map(([k,n])=>`<button class="tab" role="tab" aria-selected="${k===tab}" data-k="${k}">${n}</button>`).join("");
+  $("#tabs").querySelectorAll("button").forEach(b=>b.onclick=()=>{tab=b.dataset.k;paintPlan()});
+  const list=avail().filter(c=>tab==="all"||c.a===tab).sort((a,b)=>isNeed(b)-isNeed(a));
+  $("#deck").innerHTML=list.map(c=>`<button class="card ${plan[selDay].includes(c.id)?"in":""}" data-id="${c.id}">
+      ${isNeed(c)?'<span class="need">❤️ 필요</span>':""}
+      <span class="em">${c.em}</span><b>${c.n}</b>
+      <span class="meta"><span>⏱ ${c.m}분</span><span>${AREAS[c.a]}</span></span></button>`).join("");
+  $("#deck").querySelectorAll(".card").forEach(b=>b.onclick=()=>{
+    const c=byId(b.dataset.id);
+    if(plan[selDay].includes(c.id)){toast(`${DAYS[selDay].n}요일에 이미 넣었어요. 다른 요일을 골라 보세요.`);return}
+    plan[selDay].push(c.id);
+    const l=load(selDay),cap=DAYS[selDay].cap;
+    if(l>cap)toast(`⚠️ ${DAYS[selDay].n}요일 빈 시간(${cap}분)을 넘었어요! 정말 할 수 있을까요?`);
+    else toast(`${c.em} ${DAYS[selDay].n}요일에 '${c.n}' 추가!`);
+    paintPlan();
+  });
+  const total=plan.flat().length,mins=DAYS.reduce((s,_,i)=>s+load(i),0);
+  $("#planSum").textContent=total?`총 ${total}개 · ${mins}분 계획`:"카드를 1개 이상 넣어 주세요.";
+  $("#runBtn").disabled=!total;
+}
+$("#runBtn").onclick=()=>{go("result");simulate()};
+
+/* ---------- 3. simulate & score ---------- */
+function simulate(){
+  $("#endWrap").hidden=true;
+  const done=[],fail=[],days=[];
+  DAYS.forEach((d,i)=>{
+    let cap=d.cap,ev=null;
+    if(plan[i].length&&Math.random()<.3){ev=EVENTS[Math.floor(Math.random()*EVENTS.length)];cap-=10}
+    let used=0;const ok=[],ng=[];
+    plan[i].forEach(id=>{const c=byId(id);
+      if(c.danger){ng.push(c);return}
+      if(used+c.m<=cap){used+=c.m;ok.push(c)}else ng.push(c)});
+    ok.forEach(c=>done.push({c,i})); ng.forEach(c=>fail.push({c,i}));
+    days.push({d,ev,ok,ng});
+  });
+  $("#sim").innerHTML=days.map(({d,ev,ok,ng})=>{
+    const big=!ok.length&&!ng.length?"😴":ng.length?(ok.length?"😅":"😵"):"😊";
+    return `<div class="sday"><div class="dname">${d.n}</div><div class="big">${big}</div>
+      ${ev?`<div class="ev">${ev}</div>`:""}
+      ${ok.map(c=>`<div class="ok">✔ ${c.em} ${c.n}</div>`).join("")}
+      ${ng.map(c=>`<div class="ng">${c.em} ${c.n}</div>`).join("")}
+      ${!ok.length&&!ng.length?'<div class="muted">쉬는 날</div>':""}</div>`}).join("");
+  const els=[...document.querySelectorAll(".sday")];
+  const fast=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  els.forEach((el,i)=>setTimeout(()=>el.classList.add("show"),fast?0:i*450));
+  setTimeout(()=>score(done,fail,days),fast?0:els.length*450+300);
+}
+function score(done,fail,days){
+  const planned=plan.flat().map(byId),safePlanned=planned.filter(c=>!c.danger);
+  const dangers=[...new Set(planned.filter(c=>c.danger).map(c=>c.id))].map(byId);
+  const raw={
+    doable: safePlanned.length? done.length/safePlanned.length*20 : 0,
+    steady: days.filter(x=>x.ok.length).length/7*20,
+    variety: new Set(done.map(x=>x.c.a)).size/4*20,
+    help: Math.min(20, done.filter(x=>isNeed(x.c)).length*4),
+    safe: Math.max(0,20-dangers.length*10)
+  };
+  const keys=["doable","steady","variety","help"];
+  const w=k=>crit.includes(k)?1.5:1;
+  const maxSum=keys.reduce((s,k)=>s+20*w(k),0)+20;
+  const sum=keys.reduce((s,k)=>s+raw[k]*w(k),0)+raw.safe;
+  const total=Math.round(sum/maxSum*100);
+  const busy=Math.max(...days.map(x=>x.ok.length));
+  let E;
+  if(dangers.length) E=["🦺","용감하지만 위험해!","하려는 마음은 멋지지만, 내 위치에서 하기 위험한 일이 있었어요. 안전이 먼저예요!"];
+  else if(raw.doable<12) E=["📋","계획만 거창형","하고 싶은 일은 많았는데 빈 시간보다 넘쳐서 많이 못 했어요. 할 수 있는 만큼 계획해 봐요."];
+  else if(total>=85) E=["🏆","우리 집 살림 히어로","무리 없이, 꾸준히, 가족에게 필요한 일을 해냈어요. 진짜 든든한 가족 구성원!"];
+  else if(raw.steady<9&&busy>=3) E=["🔥","몰아치기형","하루에 몰아서 많이 했어요. 조금씩 나눠서 하면 더 오래 꾸준히 할 수 있어요."];
+  else if(total>=65) E=["🌟","든든한 가족 도우미","내가 할 수 있는 일을 잘 찾아서 실천했어요. 조금만 더 다양하게 도전해 봐요!"];
+  else E=["🌱","살림 새싹","첫걸음을 뗐어요! 다음엔 날을 더 늘리거나 가족에게 필요한 일을 하나 더 맡아 봐요."];
+  $("#endEm").textContent=E[0];$("#endTitle").textContent=E[1];$("#endText").textContent=E[2];
+  $("#endScore").innerHTML=`${total}<small> / 100점</small>`;
+  const names={doable:"✅ 실천 가능성",steady:"🗓️ 꾸준함",variety:"🌈 다양함",help:"❤️ 가족 돕기",safe:"🦺 안전"};
+  $("#meters").innerHTML=[...keys,"safe"].map(k=>`<div class="meter"><span>${names[k]}${crit.includes(k)?'<span class="star">❤️</span>':""}</span>
+    <span class="bar"><i style="width:${raw[k]/20*100}%;${k==="safe"&&raw.safe<20?"background:var(--red)":""}"></i></span>
+    <span class="v">${Math.round(raw[k])}/20</span></div>`).join("");
+  const uniq=[...new Map(done.map(x=>[x.c.id,x.c])).values()];
+  $("#promise").innerHTML=uniq.length?uniq.map(c=>`<label><input type="checkbox" id="p-${c.id}"> ${c.em} ${c.n}</label>`).join(""):'<p class="muted">해낸 일이 없어요. 계획을 다시 세워 볼까요?</p>';
+  const R=[];
+  if(dangers.length)R.push(`${dangers.map(c=>c.em+" "+c.n).join(", ")}: ${dangers[0].danger} 대신 어떤 일을 할 수 있을까요?`);
+  if(fail.some(x=>!x.c.danger))R.push("못 한 일이 생긴 요일은 왜 그랬을까요? 어떻게 바꾸면 해낼 수 있을까요?");
+  R.push(`우리 가족(${size(fam)}명${fam.work?", 맞벌이":""})에게 가장 도움이 되는 일은 무엇이었나요?`);
+  R.push("내가 고른 기준 두 가지를 잘 지켰나요? 점수를 보고 이야기해 봐요.");
+  $("#reflect").innerHTML=R.map(r=>`<li>${r}</li>`).join("");
+  last={days,raw,total,E,uniq,R,names,keys};
+  $("#pdfMsg").textContent="";
+  $("#endWrap").hidden=false;
+}
+let last=null;
+
+/* ---------- PDF 활동지 ---------- */
+function buildReport(){
+  const {days,raw,total,E,uniq,R,names,keys}=last;
+  const picked=uniq.filter(c=>$("#p-"+c.id)?.checked);
+  const famText=$("#familyRow").textContent.split("(")[0]+` · ${size(fam)}명${fam.work?" · 맞벌이":""}`;
+  const d=new Date(),date=`${d.getFullYear()}. ${d.getMonth()+1}. ${d.getDate()}.`;
+  const esc=s=>String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+  $("#report").innerHTML=`
+    <div class="rhead">
+      <div><div class="rsub">실과 · 가정생활 | 자신의 위치에서 할 수 있는 가정 일을 찾아 계획하고 실천하기</div>
+      <h1>🏠 우리 집 일주일 챌린지 활동지</h1></div>
+      <div class="who"><div>번호 <span>${esc($("#stuNo").value)}</span></div><div>이름 <span>${esc($("#stuName").value)}</span></div></div>
+    </div>
+    <div class="rgrid">
+      <div class="rbox"><h3>👨‍👩‍👧‍👦 우리 가족</h3><div style="font-size:18px">${famText}</div></div>
+      <div class="rbox"><h3>⭐ 내가 고른 기준</h3>${crit.map(k=>{const c=CRIT.find(x=>x.k===k);return `${c.em} <b>${c.n}</b> – ${c.d}`}).join("<br>")}</div>
+    </div>
+    <div><h3>📅 나의 일주일 계획과 실천 결과</h3>
+      <table><thead><tr><th style="width:44px">요일</th><th style="width:62px">빈 시간</th><th>계획한 일 (✔ 해냄 / 줄 그은 것 못 함)</th><th style="width:150px">돌발 상황</th></tr></thead><tbody>
+      ${days.map(x=>`<tr><td class="c">${x.d.n}</td><td class="c">${x.d.cap}분</td>
+        <td>${x.ok.map(c=>`✔ ${c.em} ${c.n}`).concat(x.ng.map(c=>`<span class="ng">${c.em} ${c.n}</span>`)).join(" · ")||"쉬는 날"}</td>
+        <td>${x.ev||""}</td></tr>`).join("")}
+      </tbody></table></div>
+    <div class="rend"><span class="e">${E[0]}</span><div><b>${E[1]}</b><div>${E[2]}</div></div><span class="rscore">${total}점</span></div>
+    <div class="rgrid">
+      <div class="rbox"><h3>📊 점수</h3><div style="display:flex;flex-direction:column;gap:5px">
+        ${[...keys,"safe"].map(k=>`<div class="rm"><span>${names[k]}${crit.includes(k)?" ❤️":""}</span><span class="bar"><i style="width:${raw[k]/20*100}%"></i></span><span>${Math.round(raw[k])}/20</span></div>`).join("")}
+      </div></div>
+      <div class="rbox"><h3>✋ 진짜로 실천할 일</h3>
+        ${picked.length?picked.map(c=>`☐ ${c.em} ${c.n}`).join("<br>"):'<div class="lines"><div></div><div></div><div></div></div>'}
+      </div>
+    </div>
+    <div class="rbox"><h3>💬 돌아보기</h3>
+      ${R.map((r,i)=>`<div class="q">${i+1}. ${r}</div><div class="lines"><div></div></div>`).join("")}
+    </div>
+    <div class="sign">${date} &nbsp; 선생님 확인 <span></span> &nbsp; 부모님 확인 <span></span></div>`;
+}
+$("#pdfBtn").onclick=async()=>{
+  const btn=$("#pdfBtn"),msg=$("#pdfMsg");
+  if(!last)return;
+  if(!window.html2canvas||!window.jspdf){msg.textContent="PDF 도구를 불러오지 못했어요. 새로고침 후 다시 눌러 주세요.";return}
+  btn.disabled=true;msg.textContent="활동지를 만드는 중이에요…";
+  try{
+    const dl=await (window.claude?.use?.("downloads")??null);
+    if(!dl){msg.textContent="이 화면에서는 파일 저장을 할 수 없어요.";return}
+    buildReport();
+    try{await document.fonts.ready}catch(e){}
+    const canvas=await html2canvas($("#report"),{scale:2,backgroundColor:"#FFFFFF",useCORS:true});
+    const pdf=new jspdf.jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
+    pdf.addImage(canvas.toDataURL("image/jpeg",0.92),"JPEG",0,0,210,297);
+    const nm=($("#stuNo").value+"_"+$("#stuName").value).replace(/^_|_$/g,"").trim();
+    await dl.save({filename:`우리집일주일챌린지${nm?"_"+nm:""}.pdf`,data:pdf.output("blob")});
+    msg.textContent="✅ 저장했어요!";
+  }catch(e){
+    msg.textContent=e&&e.code==="declined"?"저장을 취소했어요.":e&&e.code==="rate_limited"?"잠시 후 다시 눌러 주세요.":"저장하지 못했어요. 다시 시도해 주세요.";
+  }finally{btn.disabled=false}
+};
+(async()=>{try{const dl=await (window.claude?.use?.("downloads")??null);if(!dl){$("#pdfBtn").disabled=true;$("#pdfMsg").textContent="이 화면에서는 PDF 저장을 쓸 수 없어요."}}catch(e){}})();
+$("#replan").onclick=()=>go("plan");
+$("#again").onclick=()=>{plan=DAYS.map(()=>[]);crit=[];paintCrit();go("setup")};
+
+/* ---------- common ---------- */
+function go(s){
+  ["setup","plan","result"].forEach(x=>$("#"+x).hidden=x!==s);
+  document.querySelectorAll(".step").forEach(el=>el.classList.toggle("on",el.dataset.s===s));
+  if(s==="plan")paintPlan();
+  window.scrollTo({top:0});
+}
+let tt;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),2200)}
+paint();paintCrit();
+</script>
+
+</body></html>
